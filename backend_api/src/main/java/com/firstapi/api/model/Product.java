@@ -1,12 +1,21 @@
 package com.firstapi.api.model;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
-@Component
+@Entity
+@Table(name = "product")
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(nullable = false, length =255)
     private String name;
+
+    @Column(nullable = false)
     private double price;
 
 
