@@ -8,7 +8,7 @@ const AddProduct = ({ onProductAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://ads-tiffany-inputs-motel.trycloudflare.com/api/products", {
+      const response = await axios.post("https://hull-richards-tba-employment.trycloudflare.com/api/products", {
         name,
         price,
       });
