@@ -18,6 +18,17 @@ public class Product {
     @Column(nullable = false)
     private double price;
 
+    public Double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    @Column
+    private Double quantity;
+
 
     public Product() {
     }
