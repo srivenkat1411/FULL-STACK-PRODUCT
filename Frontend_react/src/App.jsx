@@ -1,34 +1,14 @@
-// import React, { useState } from "react";
-// import ProductList from "./components/ProductList";
-// import AddProduct from "./components/AddProduct";
-
-// const App = () => {
-//   const [update, setUpdate] = useState(false);
-
-//   const handleProductAdded = () => {
-//     setUpdate(!update); // trigger re-fetch in ProductList
-//   };
-
-//   return (
-//     <div>
-//       <h1>Product Management</h1>
-//       <AddProduct onProductAdded={handleProductAdded} />
-//       <ProductList key={update} />
-//     </div>
-//   );
-// };
-
-// export default App;
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import ProductList from "./components/ProductList";
-import AddProduct from "./components/AddProduct";
+import Home from "./pages/Home";
+import AllProducts from "./pages/AllProducts";
+import AddProductPage from "./pages/AddProductPage";
 
 const App = () => {
   const [update, setUpdate] = useState(false);
 
   const handleProductAdded = () => {
-    setUpdate(!update); // trigger re-fetch in ProductList
+    setUpdate(!update); // trigger re-fetch in AllProducts
   };
 
   return (
@@ -37,15 +17,46 @@ const App = () => {
         <h1>Product Management</h1>
 
         {/* Navigation */}
-        <nav style={{ marginBottom: "20px" }}>
-          <Link to="/" style={{ marginRight: "10px" }}>Product List</Link>
-          <Link to="/add">Add Product</Link>
+        <nav
+          style={{
+            marginBottom: "20px",
+            borderBottom: "2px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <Link
+            to="/"
+            style={{
+              marginRight: "15px",
+              textDecoration: "none",
+              color: "#007bff",
+            }}
+          >
+            Home
+          </Link>
+          <Link
+            to="/products"
+            style={{
+              marginRight: "15px",
+              textDecoration: "none",
+              color: "#007bff",
+            }}
+          >
+            All Products
+          </Link>
+          <Link to="/add" style={{ textDecoration: "none", color: "#007bff" }}>
+            Add Product
+          </Link>
         </nav>
 
         {/* Routes */}
         <Routes>
-          <Route path="/" element={<ProductList key={update} />} />
-          <Route path="/add" element={<AddProduct onProductAdded={handleProductAdded} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<AllProducts key={update} />} />
+          <Route
+            path="/add"
+            element={<AddProductPage onProductAdded={handleProductAdded} />}
+          />
         </Routes>
       </div>
     </Router>

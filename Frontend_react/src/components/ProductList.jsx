@@ -1,42 +1,54 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-const API_BASE =
-  `https://kingston-firewire-feels-floor.trycloudflare.com/api/products/name/${name}`;
+import productService from "../services/productService";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [updatingProduct, setUpdatingProduct] = useState(null);
 
   const fetchProducts = async (search = "") => {
     setLoading(true);
     setError(null);
     try {
-      if (search) {
-        // Treat the search as an ID and call the get-by-id endpoint
-        const url = `${API_BASE}/${encodeURIComponent(search)}`;
-        const response = await axios.get(url);
-        // backend returns a single product object for GET /products/{id}
-        setProducts(
-          Array.isArray(response.data) ? response.data : [response.data]
-        );
-      } else {
-        const response = await axios.get(API_BASE);
-        setProducts(response.data);
-      }
+      // Try API search-first. `searchProducts` will call getAll when search is falsy.
+      const data = await productService.searchProducts(search);
+      setProducts(Array.isArray(data) ? data : [data]);
     } catch (err) {
-      // If product not found, show empty list with a helpful message
-      if (err.response && err.response.status === 404) {
-        setProducts([]);
-        setError("Product not found");
-      } else {
-        console.error("Error fetching products:", err);
-        setError("Failed to load products");
-      }
+      console.error("Error fetching products:", err);
+      setError("Failed to load products");
+      // If API fails, keep current products (or clear).
+      // Optionally: fallback to client-side filter if we have an initial list.
+      setProducts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuantityUpdate = async (product, newQuantity) => {
+    if (newQuantity < 0) return; // Prevent negative quantities
+
+    setUpdatingProduct(product.name);
+    setError(null);
+
+    try {
+      // Call API to update quantity with full payload {id,name,quantity}
+      await productService.updateProductQuantity(product, newQuantity);
+
+      // Update local state optimistically
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p.id === product.id || p._id === product._id || p.name === product.name
+            ? { ...p, quantity: newQuantity }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+      setError(`Failed to update quantity for ${product.name}`);
+    } finally {
+      setUpdatingProduct(null);
     }
   };
 
@@ -46,7 +58,7 @@ const ProductList = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchProducts(query);
+    fetchProducts(query.trim());
   };
 
   const handleClear = () => {
@@ -61,7 +73,7 @@ const ProductList = () => {
       <form onSubmit={handleSearchSubmit} style={{ marginBottom: 12 }}>
         <input
           type="text"
-          placeholder="Search by id"
+          placeholder="Search by name"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -74,10 +86,55 @@ const ProductList = () => {
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <ul>
+      <ul style={{ listStyle: "none", padding: 0 }}>
         {products.map((p) => (
-          <li key={p.id}>
-            {p.name} - {p.price}
+          <li
+            key={p.id || p._id}
+            style={{
+              border: "1px solid #ddd",
+              padding: "12px",
+              marginBottom: "8px",
+              borderRadius: "4px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <strong>{p.name}</strong>
+              {p.price && <span>  ${p.price}</span>}
+              <div
+                style={{ fontSize: "0.9em", color: "#666", marginTop: "4px" }}
+              >
+                Quantity: {p.quantity || 0}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <button
+                onClick={() => handleQuantityUpdate(p, (p.quantity || 0) - 1)}
+                disabled={updatingProduct === p.name || (p.quantity || 0) <= 0}
+                style={{
+                  padding: "4px 12px",
+                  cursor: updatingProduct === p.name ? "wait" : "pointer",
+                }}
+              >
+                −
+              </button>
+              <span style={{ minWidth: "30px", textAlign: "center" }}>
+                {updatingProduct === p.name ? "..." : p.quantity || 0}
+              </span>
+              <button
+                onClick={() => handleQuantityUpdate(p, (p.quantity || 0) + 1)}
+                disabled={updatingProduct === p.name}
+                style={{
+                  padding: "4px 12px",
+                  cursor: updatingProduct === p.name ? "wait" : "pointer",
+                }}
+              >
+                +
+              </button>
+            </div>
           </li>
         ))}
       </ul>
