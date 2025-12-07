@@ -90,216 +90,156 @@ const AllProducts = () => {
   };
 
   return (
-    <div>
-      <h2>All Products</h2>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-gray-900">All Products</h2>
+      </div>
 
       {/* Search Form */}
-      <form onSubmit={handleSearchSubmit} style={{ marginBottom: 20 }}>
-        <input
-          type="text"
-          placeholder="Search by product name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{
-            padding: "8px 12px",
-            fontSize: "1em",
-            width: "300px",
-            marginRight: "10px",
-            border: "1px solid #ddd",
-            borderRadius: "4px",
-          }}
-        />
+      <form onSubmit={handleSearchSubmit} className="flex gap-3">
+        <div className="flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Search by product name..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+          />
+        </div>
         <button
           type="submit"
-          style={{
-            padding: "8px 16px",
-            fontSize: "1em",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            marginRight: "10px",
-          }}
+          className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
         >
           Search
         </button>
         <button
           type="button"
           onClick={handleClear}
-          style={{
-            padding: "8px 16px",
-            fontSize: "1em",
-            backgroundColor: "#6c757d",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"
         >
           Clear
         </button>
       </form>
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
-      {/* Products List */}
-      <div style={{ marginTop: "20px" }}>
+      {/* Products Grid */}
+      <div>
         {products.length === 0 && !loading ? (
-          <p style={{ color: "#666", fontStyle: "italic" }}>
-            No products found.
-          </p>
+          <div className="text-center py-12">
+            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p className="mt-4 text-gray-500 text-lg">No products found.</p>
+          </div>
         ) : (
-          <ul style={{ listStyle: "none", padding: 0 }}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((p) => (
-              <li
+              <div
                 key={p.id || p._id}
-                style={{
-                  border: "1px solid #ddd",
-                  padding: "16px",
-                  marginBottom: "12px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "#0a0909ff",
-                }}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
               >
-                <div>
-                  <strong style={{ fontSize: "1.1em" }}>{p.name}</strong>
-                  {p.price && (
-                    <span style={{ color: "#28a745", marginLeft: "10px" }}>
-                      {" "}
-                      Price = ${p.price}
-                    </span>
-                  )}
-                  <div
-                    style={{
-                      fontSize: "0.9em",
-                      color: "#666",
-                      marginTop: "6px",
-                    }}
-                  >
-                    Quantity: <strong>{p.quantity || 0}</strong>
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {p.name}
+                      </h3>
+                      {p.price && (
+                        <div className="flex items-center">
+                          <span className="text-2xl font-bold text-green-600">
+                            ${p.price}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <button
-                  onClick={() => openQuantityDialog(p)}
-                  disabled={updatingProduct === p.name}
-                  style={{
-                    padding: "10px 20px",
-                    fontSize: "0.95em",
-                    backgroundColor: "#ffc107",
-                    color: "#000",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: updatingProduct === p.name ? "wait" : "pointer",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {updatingProduct === p.name
-                    ? "Updating..."
-                    : "Update Quantity"}
-                </button>
-              </li>
+                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Stock</span>
+                      <span className={`text-lg font-semibold ${
+                        (p.quantity || 0) > 10 ? "text-green-600" :
+                        (p.quantity || 0) > 0 ? "text-yellow-600" : "text-red-600"
+                      }`}>
+                        {p.quantity || 0} units
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => openQuantityDialog(p)}
+                    disabled={updatingProduct === p.name}
+                    className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {updatingProduct === p.name
+                      ? "Updating..."
+                      : "Update Quantity"}
+                  </button>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
       {/* Quantity Update Dialog */}
       {showDialog && selectedProduct && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "30px",
-              borderRadius: "8px",
-              minWidth: "400px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <h3 style={{ marginTop: 0 }}>Update Quantity</h3>
-            <p style={{ color: "#666", marginBottom: "20px" }}>
-              Product: <strong>{selectedProduct.name}</strong>
-            </p>
-            <p style={{ color: "#666", marginBottom: "20px" }}>
-              Current Quantity: <strong>{selectedProduct.quantity || 0}</strong>
-            </p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-fadeIn">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Update Quantity
+            </h3>
 
-            <div style={{ marginBottom: "20px" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "bold",
-                }}
-              >
-                New Quantity:
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={newQuantity}
-                onChange={(e) => setNewQuantity(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  fontSize: "1em",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                }}
-                autoFocus
-              />
+            <div className="space-y-4 mb-6">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Product</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {selectedProduct.name}
+                </p>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Current Quantity</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {selectedProduct.quantity || 0} units
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Quantity
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={newQuantity}
+                  onChange={(e) => setNewQuantity(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-lg"
+                  autoFocus
+                />
+              </div>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                justifyContent: "flex-end",
-              }}
-            >
+            <div className="flex gap-3">
               <button
                 onClick={closeDialog}
-                style={{
-                  padding: "10px 20px",
-                  fontSize: "1em",
-                  backgroundColor: "#6c757d",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="flex-1 px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleQuantityUpdate}
-                style={{
-                  padding: "10px 20px",
-                  fontSize: "1em",
-                  backgroundColor: "#28a745",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="flex-1 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
               >
                 Update
               </button>
