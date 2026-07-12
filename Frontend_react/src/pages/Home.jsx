@@ -3,69 +3,60 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Welcome to Product Management System</h2>
-      <p style={{ fontSize: "1.1em", color: "#666", marginTop: "20px" }}>
-        Manage your products efficiently with our simple and intuitive
-        interface.
-      </p>
+    <div className="home-page">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-badge">
+          <span>✨</span>
+          <span>Product Management Made Simple</span>
+        </div>
 
-      <div
-        style={{
-          marginTop: "40px",
-          display: "flex",
-          gap: "20px",
-          justifyContent: "center",
-        }}
-      >
-        <Link to="/products">
-          <button
-            style={{
-              padding: "12px 24px",
-              fontSize: "1em",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
+        <h1 className="hero-title">
+          Manage Your <span className="gradient-text">Product Catalog</span> with Ease
+        </h1>
+
+        <p className="hero-description">
+          A streamlined dashboard to organize your inventory, track quantities,
+          and keep your product catalog always up to date.
+        </p>
+
+        <div className="hero-actions">
+          <Link to="/products" className="btn btn-primary">
+            <span>📦</span>
             View All Products
-          </button>
-        </Link>
-
-        <Link to="/add">
-          <button
-            style={{
-              padding: "12px 24px",
-              fontSize: "1em",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
+          </Link>
+          <Link to="/add" className="btn btn-secondary">
+            <span>➕</span>
             Add New Product
-          </button>
-        </Link>
-      </div>
+          </Link>
+        </div>
+      </section>
 
-      <div
-        style={{
-          marginTop: "60px",
-          textAlign: "left",
-          maxWidth: "600px",
-          margin: "60px auto",
-        }}
-      >
-        <h3>Features:</h3>
-        <ul style={{ fontSize: "1em", lineHeight: "2em" }}>
-          <li>📦 View all products in your inventory</li>
-          <li>🔍 Search products by name</li>
-          <li>➕ Add new products to your catalog</li>
-          <li>📊 Update product quantities easily</li>
-        </ul>
+      {/* Features Grid */}
+      <div className="features-grid">
+        <div className="glass-card feature-card">
+          <span className="feature-icon">📦</span>
+          <h3>Inventory Overview</h3>
+          <p>View all products in your catalog at a glance with a beautiful card-based layout.</p>
+        </div>
+
+        <div className="glass-card feature-card">
+          <span className="feature-icon">🔍</span>
+          <h3>Smart Search</h3>
+          <p>Quickly find any product by name with instant, real-time search results.</p>
+        </div>
+
+        <div className="glass-card feature-card">
+          <span className="feature-icon">➕</span>
+          <h3>Quick Add</h3>
+          <p>Add new products to your catalog in seconds with our streamlined form.</p>
+        </div>
+
+        <div className="glass-card feature-card">
+          <span className="feature-icon">📊</span>
+          <h3>Quantity Tracking</h3>
+          <p>Update and monitor product quantities easily to keep your inventory accurate.</p>
+        </div>
       </div>
     </div>
   );
