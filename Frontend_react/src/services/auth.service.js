@@ -2,18 +2,18 @@ import api from "./apiClient";
 
 export const login = async (username, password) => {
     try {
-        const response = await api.post("/api/auth/login", {username, password});
-        return {success: true, user: response.data.user}
+        const response = await api.post("/auth/login", { username, password });
+        return { success: true, user: response.data.user }
 
     } catch (error) {
         const message = error.response?.data?.message || "Login failed. Please try again.";
-    return { success: false, message };
+        return { success: false, message };
     }
 }
 
 export const logOut = async () => {
     try {
-        await api.post("/api/auth/logout");
+        await api.post("/auth/logout");
         return { success: true };
     } catch (error) {
         const message = error.response?.data?.message || "Logout failed. Please try again.";
@@ -23,12 +23,12 @@ export const logOut = async () => {
 
 export const signUp = async (username, password, email) => {
     try {
-        const response = await api.post("/auth/register",{username,password,email});
+        const response = await api.post("/auth/register", { username, password, email });
 
-        return {success: true, user: response.data.user}
+        return { success: true, user: response.data.user }
     } catch (error) {
         const message =
-        error.response?.data?.message || "Signup failed. Please try again.";
+            error.response?.data?.message || "Signup failed. Please try again.";
         return { success: false, message };
     }
 }

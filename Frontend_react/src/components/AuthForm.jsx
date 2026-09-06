@@ -175,7 +175,7 @@ const AuthForm = ({ mode }) => {
             </div>
           )}
 
-          {/* <div className="form-group">
+          {isSignup && (<div className="form-group">
             <label className="form-label" htmlFor="auth-email-input">Email Address</label>
             <input
               id="auth-email-input"
@@ -187,7 +187,8 @@ const AuthForm = ({ mode }) => {
               placeholder="name@example.com"
               required
             />
-          </div> */}
+          </div>
+          )}
 
           <div className="form-group">
             <label className="form-label" htmlFor="auth-password-input">Password</label>
