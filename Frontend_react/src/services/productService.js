@@ -19,7 +19,7 @@ const productService = {
   },
 
   addProduct: async (productData) => {
-    const response = await apiClient.post("/api/products", productData);
+    const response = await apiClient.post("/api/products/me", productData);
     return response.data;
   },
 
