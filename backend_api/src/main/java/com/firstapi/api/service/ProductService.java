@@ -3,9 +3,11 @@ package com.firstapi.api.service;
 import com.firstapi.api.dto.UpdateProductQuantityRequest;
 import com.firstapi.api.model.Product;
 import com.firstapi.api.repo.ProductRepository;
+import com.firstapi.api.repo.UserRepository;
 import com.firstapi.api.exception.GlobalExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,16 +20,29 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class ProductService {
 
-    public ProductService(ProductRepository repo) {
+    public ProductService(ProductRepository repo, UserRepository userRepository) {
         this.repo = repo;
+        this.userRepository = userRepository;
     }
 
     private final ProductRepository repo;
+    private final UserRepository userRepository;
     private final Map<Long, Product> store = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong(1);
 
     public Product createProduct(Product product)
     {
+        return repo.save(product);
+    }
+
+    public Product createProductForAuthenticatedUser(Product product) {
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        product.setUser(userRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username)));
+
         return repo.save(product);
     }
 
@@ -41,7 +56,11 @@ public class ProductService {
 
     public List<Product> getAllProducts()
     {
-        return repo.findAll();
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return repo.findAllByUser_Username(username);
     }
 
     public boolean deleteProduct(Long id) {

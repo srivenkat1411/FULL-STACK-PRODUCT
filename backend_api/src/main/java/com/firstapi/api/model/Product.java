@@ -29,6 +29,10 @@ public class Product {
     @Column
     private Double quantity;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
+    private User user;
+
 
     public Product() {
     }
@@ -61,5 +65,13 @@ public class Product {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -13,7 +13,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173",           // dev front-end
+                        .allowedOriginPatterns("http://localhost:5173",           // dev front-end
                                 "https://*.trycloudflare.com",     // your tunnel
                                 "https://*.loca.lt"   )             // if you use LocalTunnel)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS");

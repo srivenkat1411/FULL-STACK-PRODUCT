@@ -1,10 +1,12 @@
 package com.firstapi.api.controller;
 
 import com.firstapi.api.dto.UpdateProductQuantityRequest;
+import com.firstapi.api.dto.ProductResponse;
 import com.firstapi.api.model.Product;
 import com.firstapi.api.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,32 +25,37 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> listAll() {
-        return productService.getAllProducts();
+    public ResponseEntity<?> listAll() {
+        List<Product> products = productService.getAllProducts();
+        if (products == null || products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found");
+        }
+        return ResponseEntity.ok(products.stream().map(ProductResponse::from).toList());
     }
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product product) {
+    public ResponseEntity<ProductResponse> create(@RequestBody Product product) {
         Product saved = productService.createProduct(product);
         return ResponseEntity.created(URI.create("/api/products/" + saved.getId()))
-                .body(saved);
+                .body(ProductResponse.from(saved));
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<ProductResponse> createForAuthenticatedUser(@RequestBody Product product) {
+        Product saved = productService.createProductForAuthenticatedUser(product);
+        return ResponseEntity.created(URI.create("/api/products/" + saved.getId()))
+                .body(ProductResponse.from(saved));
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<Optional<Product>> getById(@PathVariable Long id) {
-        Optional<Product> p = productService.getProductById(id);
-        if (p.isPresent())
-            return ResponseEntity.ok(p);
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.of(productService.getProductById(id).map(ProductResponse::from));
     }
 
     @Operation(summary = "Get by name", description = "Case-insensitive lookup")
     @GetMapping("/name/{name}")
-    public ResponseEntity<Optional<Product>> getByName(@PathVariable String name) {
-        Optional<Product> p = productService.getProductByName(name);
-        if (p.isPresent())
-            return ResponseEntity.ok(p);
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<ProductResponse> getByName(@PathVariable String name) {
+        return ResponseEntity.of(productService.getProductByName(name).map(ProductResponse::from));
     }
 
     @DeleteMapping("/{id}")
