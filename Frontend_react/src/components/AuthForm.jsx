@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import authService from "../services/auth.service";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const AuthForm = ({ mode }) => {
+const AuthForm = ({ mode, onSuccess }) => {
+  const navigate = useNavigate();
+  const { login, signUp } = useAuth();
   const isSignup = mode === "signup";
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -58,8 +60,8 @@ const AuthForm = ({ mode }) => {
       setLoading(true);
 
       const result = isSignup
-        ? await authService.signUp(formData.username.trim(), formData.password, formData.email.trim())
-        : await authService.login(formData.username.trim(), formData.password);
+        ? await signUp(formData.username.trim(), formData.password, formData.email.trim())
+        : await login(formData.username.trim(), formData.password);
 
       if (result.success) {
         setSubmitted(true);
@@ -69,6 +71,12 @@ const AuthForm = ({ mode }) => {
           password: "",
           confirmPassword: "",
         }));
+
+        if (onSuccess) {
+          onSuccess(result);
+        } else {
+          navigate("/");
+        }
       } else {
         setError(result.message || (isSignup ? "Signup failed. Please try again." : "Login failed. Please try again."));
       }

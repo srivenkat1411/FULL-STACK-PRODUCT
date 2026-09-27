@@ -1,14 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
+  const handleLoginSuccess = () => {
+    navigate("/");
+  };
+
   return (
     <div className="auth-shell">
       <div className="auth-shell-topbar">
-        <Link to="/" className="auth-shell-home-link">← Back to dashboard</Link>
+        <Link to="/signup" className="auth-shell-home-link">Need an account? Sign up →</Link>
       </div>
-      <AuthForm mode="login" />
+      <AuthForm mode="login" onSuccess={handleLoginSuccess} />
     </div>
   );
 };
